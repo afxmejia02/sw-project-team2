@@ -29,4 +29,6 @@ class Usuario (
         recompensas=recompensas.coleccionRecompensas
     }
 
+    /*Prueba GIT COMMIT*/
+
 }
