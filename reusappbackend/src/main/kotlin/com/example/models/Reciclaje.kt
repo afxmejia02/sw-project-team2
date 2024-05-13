@@ -13,3 +13,4 @@ class Reciclaje (
     val fecha: LocalDate,
     var usuario: Usuario,
 )
+
