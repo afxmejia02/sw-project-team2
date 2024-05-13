@@ -29,6 +29,6 @@ class Usuario (
         recompensas=recompensas.coleccionRecompensas
     }
 
-    /*Prueba GIT COMMIT*/
+    /*Prueba GIT COMMIT* PRUEBA RECIBIDA/
 
 }
