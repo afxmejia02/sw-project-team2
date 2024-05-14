@@ -19,24 +19,38 @@ class Usuario(
     @Contextual
     val puntos: Puntos,
     @Contextual
-    val recompensa: UsuariosRecompensas,
-    val recompensas: MutableList<Recompensas> = mutableListOf(),
+    val recompense: UsuariosRecompensas,
+    private var recompensas: MutableList<Recompensas> = mutableListOf(),
 
-) {
-    fun agregarReciclaje(reciclaje: Reciclaje) {
+    ) {
+    fun agregarReciclaje(reciclaje: Reciclaje): MutableList<Reciclaje> {
         reciclajes.add(reciclaje)
         reciclaje.usuario = this
+        return reciclajes
     }
 
+    fun calcularPesoTotalPorMaterial(reciclajes: List<Reciclaje>): Pair<Double, Map<TipoMaterial, Double>> {
+        val pesoPorMaterial: MutableMap<TipoMaterial, Double> = mutableMapOf()
+        var pesoTotal = 0.0
+        for (reciclaje in reciclajes) {
 
+            val pesoExistente = pesoPorMaterial.getOrDefault(reciclaje.material, 0.0)
+            pesoPorMaterial[reciclaje.material] = pesoExistente + reciclaje.peso
+            pesoTotal += reciclaje.peso
+        }
+        return Pair(pesoTotal, pesoPorMaterial)
+    }
 
     fun agregarRecompensas(recompensas: List<Recompensas>) {
-        for (recompense in recompensas) {
-            if (this.recompensa.puntosRecompensas.verificarPuntos() && !this.recompensas.contains(recompense)) {
-                this.recompensas.add(recompense)
+        for (r in recompensas) {
+            if (this.recompense.puntosRecompensas.verificarPuntos() && !this.recompensas.contains(r)) {
+                this.recompensas.add(r)
             }
         }
+
     }
+
+
 
 
 
