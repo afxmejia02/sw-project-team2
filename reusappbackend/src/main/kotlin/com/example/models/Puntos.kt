@@ -50,7 +50,7 @@ class Puntos(
         )
         val puntosPorPeso = peso*puntosPorKilogramo
         val puntosPorMaterialReciclado = puntosPorMaterial[material] ?: 0
-        val total = puntosPorPeso*puntosPorPeso
+        val total = puntosPorPeso*puntosPorMaterialReciclado
         return total.toInt()
     }
 

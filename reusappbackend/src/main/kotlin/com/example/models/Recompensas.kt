@@ -6,20 +6,12 @@ class Recompensas (
     val nombre: String,
     val minPuntos: Int,
     val descripcion: String,
-    val coleccionRecompensas: MutableList<Recompensas>,
     private var puntos: Puntos,
-    //val usuario: Usuario
+    val usuario: Usuario
 ){
-
     fun verificarPuntos(): Boolean{
         return puntos.cantidad >= minPuntos
     }
-
-    fun agregarRecompensas() {
-        if (verificarPuntos()) coleccionRecompensas.add(this)
-    }
-
-
 
 
 
