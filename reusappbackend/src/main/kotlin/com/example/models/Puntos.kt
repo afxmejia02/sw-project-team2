@@ -13,7 +13,7 @@ class Puntos(
     val usuario: Usuario,
     private val reciclaje: Reciclaje,
     @Contextual
-    val recompensas: Recompensas
+    val puntosRecompensas: PuntosRecompensas
 ){
 
     fun randomCode(): String{
@@ -58,21 +58,9 @@ class Puntos(
         cantidad += asignarPuntos()
     }
 
-    private fun restarPuntos(): Int {
-        if (recompensas.verificarPuntos()) {
-            return recompensas.minPuntos
-        } else {
-            return 0
-        }
-    }
-
     init{
-        cantidad -= restarPuntos()
+        cantidad -= puntosRecompensas.restarPuntos()
     }
-
-
-
-
 
 }
 

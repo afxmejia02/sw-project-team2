@@ -8,11 +8,4 @@ class Recompensas (
     val descripcion: String,
     private var puntos: Puntos,
     val usuario: Usuario
-){
-    fun verificarPuntos(): Boolean{
-        return puntos.cantidad >= minPuntos
-    }
-
-
-
-}
+)

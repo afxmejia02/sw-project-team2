@@ -19,8 +19,9 @@ class Usuario(
     @Contextual
     val puntos: Puntos,
     @Contextual
-    val recompensa: Recompensas,
-    private var recompensas: MutableList<Recompensas>
+    val recompensa: UsuariosRecompensas,
+    val recompensas: MutableList<Recompensas> = mutableListOf(),
+
 ) {
     fun agregarReciclaje(reciclaje: Reciclaje) {
         reciclajes.add(reciclaje)
@@ -31,7 +32,7 @@ class Usuario(
 
     fun agregarRecompensas(recompensas: List<Recompensas>) {
         for (recompense in recompensas) {
-            if (this.recompensa.verificarPuntos() && !this.recompensas.contains(recompense)) {
+            if (this.recompensa.puntosRecompensas.verificarPuntos() && !this.recompensas.contains(recompense)) {
                 this.recompensas.add(recompense)
             }
         }
