@@ -37,4 +37,11 @@ dependencies {
     implementation("io.ktor:ktor-server-config-yaml:2.3.10")
     testImplementation("io.ktor:ktor-server-tests-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.0")
+    implementation("org.jetbrains.exposed:exposed-core:0.35.2")
+    implementation("org.jetbrains.exposed:exposed-dao:0.35.2")
+    implementation("org.jetbrains.exposed:exposed-jdbc:0.35.2")
+    implementation("org.jetbrains.exposed:exposed-java-time:0.36.2")
+    runtimeOnly("org.postgresql:postgresql:42.2.23")
 }

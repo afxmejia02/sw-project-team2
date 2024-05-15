@@ -1,75 +1,84 @@
 package com.example.models
-import com.example.models.enums.*
-import kotlinx.serialization.Serializable
+import com.example.models.enums.Periodicidad
+import com.example.models.enums.TipoMaterial
 import java.time.LocalDate
 import java.time.temporal.TemporalAdjusters
 
-@Serializable
-class Reporte(
-    val periodicidad: Periodicidad,
-    private val reciclaje: Reciclaje
-) {
-    fun generarReportes(
-        reciclajes: List<Reciclaje>,
-        fecha: LocalDate,
-        periodicidad: Periodicidad
-    ): List<Reporte> {
-        return when (periodicidad) {
-            Periodicidad.DIARIO -> generarReportesDiarios(reciclajes, fecha)
-            Periodicidad.SEMANAL -> generarReportesSemanal(reciclajes, fecha)
-            Periodicidad.MENSUAL -> generarReportesMensuales(reciclajes, fecha)
-            Periodicidad.ANUAL -> generarReportesAnuales(reciclajes, fecha)
+class ReporteFiltrado(
+    val actividadesFiltradas: List<Reciclaje>,
+    val pesoTotal: Double,
+    val pesoPorMaterial: Map<TipoMaterial, Double>
+)
+class Reporte {
+    companion object {
+        fun filtrarActividadesReciclaje(
+            reciclajes: List<Reciclaje>,
+            fecha: LocalDate,
+            periodicidad: Periodicidad
+        ): ReporteFiltrado {
+            val actividadesFiltradas = when (periodicidad) {
+                Periodicidad.DIARIO -> filtrarActividadesDiarias(reciclajes, fecha)
+                Periodicidad.SEMANAL -> filtrarActividadesSemanales(reciclajes, fecha)
+                Periodicidad.MENSUAL -> filtrarActividadesMensuales(reciclajes, fecha)
+                Periodicidad.ANUAL -> filtrarActividadesAnuales(reciclajes, fecha)
+            }
+
+            val pesoTotal = calcularPesoTotal(actividadesFiltradas)
+            val pesoPorMaterial = calcularPesoPorMaterial(actividadesFiltradas)
+
+            return ReporteFiltrado(actividadesFiltradas, pesoTotal, pesoPorMaterial)
         }
-    }
 
-    private fun generarReportesDiarios(
-        reciclajes: List<Reciclaje>,
-        fecha: LocalDate
-    ): List<Reporte> {
-        val reciclajesDelDia = reciclajes.filter { it.fecha == fecha }
-        return listOf(crearReporte(reciclajesDelDia))
-    }
-
-    private fun generarReportesSemanal(
-        reciclajes: List<Reciclaje>,
-        fecha: LocalDate
-    ): List<Reporte> {
-        val primerDiaDeLaSemana =
-            fecha.with(TemporalAdjusters.previousOrSame(LocalDate.now().dayOfWeek))
-        val ultimoDiaDeLaSemana = primerDiaDeLaSemana.plusDays(6)
-        val reciclajesDeLaSemana =
-            reciclajes.filter { it.fecha in primerDiaDeLaSemana..ultimoDiaDeLaSemana }
-        return listOf(crearReporte(reciclajesDeLaSemana))
-    }
-
-    private fun generarReportesMensuales(
-        reciclajes: List<Reciclaje>,
-        fecha: LocalDate
-    ): List<Reporte> {
-        val primerDiaDelMes = fecha.with(TemporalAdjusters.firstDayOfMonth())
-        val ultimoDiaDelMes = fecha.with(TemporalAdjusters.lastDayOfMonth())
-        val reciclajesDelMes = reciclajes.filter { it.fecha in primerDiaDelMes..ultimoDiaDelMes }
-        return listOf(crearReporte(reciclajesDelMes))
-    }
-
-    private fun generarReportesAnuales(
-        reciclajes: List<Reciclaje>,
-        fecha: LocalDate
-    ): List<Reporte> {
-        val primerDiaDelAnio = fecha.with(TemporalAdjusters.firstDayOfYear())
-        val ultimoDiaDelAnio = fecha.with(TemporalAdjusters.lastDayOfYear())
-        val reciclajesDelAnio = reciclajes.filter { it.fecha in primerDiaDelAnio..ultimoDiaDelAnio }
-        return listOf(crearReporte(reciclajesDelAnio))
-    }
-
-    private fun crearReporte(reciclajes: List<Reciclaje>): Reporte {
-        val pesoPorMaterial: MutableMap<TipoMaterial, Double> = mutableMapOf()
-        var pesoTotal = 0.0
-        for (reciclaje in reciclajes) {
-            val pesoExistente = pesoPorMaterial.getOrDefault(reciclaje.material, 0.0)
-            pesoPorMaterial[reciclaje.material] = pesoExistente + reciclaje.peso
-            pesoTotal += reciclaje.peso
+        private fun filtrarActividadesDiarias(
+            reciclajes: List<Reciclaje>,
+            fecha: LocalDate
+        ): List<Reciclaje> {
+            return reciclajes.filter { it.fecha == fecha }
         }
-        return Reporte(periodicidad, reciclaje)
+
+        private fun filtrarActividadesSemanales(
+            reciclajes: List<Reciclaje>,
+            fecha: LocalDate
+        ): List<Reciclaje> {
+            val primerDiaDeLaSemana = fecha.with(TemporalAdjusters.previousOrSame(LocalDate.now().dayOfWeek))
+            val ultimoDiaDeLaSemana = primerDiaDeLaSemana.plusDays(6)
+            return reciclajes.filter { it.fecha in primerDiaDeLaSemana..ultimoDiaDeLaSemana }
+        }
+
+        private fun filtrarActividadesMensuales(
+            reciclajes: List<Reciclaje>,
+            fecha: LocalDate
+        ): List<Reciclaje> {
+            val primerDiaDelMes = fecha.with(TemporalAdjusters.firstDayOfMonth())
+            val ultimoDiaDelMes = fecha.with(TemporalAdjusters.lastDayOfMonth())
+            return reciclajes.filter { it.fecha in primerDiaDelMes..ultimoDiaDelMes }
+        }
+
+        private fun filtrarActividadesAnuales(
+            reciclajes: List<Reciclaje>,
+            fecha: LocalDate
+        ): List<Reciclaje> {
+            val primerDiaDelAnio = fecha.with(TemporalAdjusters.firstDayOfYear())
+            val ultimoDiaDelAnio = fecha.with(TemporalAdjusters.lastDayOfYear())
+            return reciclajes.filter { it.fecha in primerDiaDelAnio..ultimoDiaDelAnio }
+        }
+
+        private fun calcularPesoTotal(actividadesFiltradas: List<Reciclaje>): Double {
+            var pesoTotal = 0.0
+            for (actividad in actividadesFiltradas) {
+                pesoTotal += actividad.peso
+            }
+            return pesoTotal
+        }
+
+        private fun calcularPesoPorMaterial(actividadesFiltradas: List<Reciclaje>): Map<TipoMaterial, Double> {
+            val pesoPorMaterial = mutableMapOf<TipoMaterial, Double>()
+            for (actividad in actividadesFiltradas) {
+                val pesoExistente = pesoPorMaterial.getOrDefault(actividad.material, 0.0)
+                pesoPorMaterial[actividad.material] = pesoExistente + actividad.peso
+            }
+            return pesoPorMaterial
+        }
     }
 }
+
